@@ -2,6 +2,8 @@
   "wordpress_url": "https://your-site.com",
   "username": "admin",
   "app_password": "your-application-password-here",
+  "status": "draft",
+  "timezone": "America/New_York",
   "events": [
     {
       "title": "First Monday Meeting",

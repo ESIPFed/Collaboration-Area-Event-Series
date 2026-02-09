@@ -12,12 +12,6 @@ This repository provides tools to automate the creation of recurring events in W
 
 ## Quick Start
 
-### PHP Script
-```bash
-php scripts/create-recurring-events.php --config=examples/event-series-config.json
-```
-
-### Python Script
 ```bash
 python scripts/create_recurring_events.py --config examples/event-series-config.json
 ```
@@ -36,7 +30,7 @@ For complete documentation, setup guides, and examples, see:
 - WordPress with The Events Calendar Pro plugin
 - REST API enabled
 - Application password for authentication
-- PHP 7.4+ or Python 3.6+
+- Python 3.6+
 
 ## Features
 
@@ -45,8 +39,7 @@ For complete documentation, setup guides, and examples, see:
 ✅ Unique event names for each event in the series  
 ✅ Customizable start/end dates and times  
 ✅ Support for venues, organizers, and categories  
-✅ Both PHP and Python implementations  
-✅ Dry-run mode for testing (Python)  
+✅ Dry-run mode for testing  
 
 ## License
 

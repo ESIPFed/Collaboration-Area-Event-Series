@@ -76,6 +76,8 @@ Configuration File Format:
   "wordpress_url": "https://your-site.com",
   "username": "your-username",
   "app_password": "your-app-password",
+  "status": "draft",
+  "timezone": "America/New_York",
   "events": [
     {
       "title": "Event Name",
@@ -88,7 +90,9 @@ Configuration File Format:
       "recurrence_day": "first Monday",
       "venue": "Virtual",
       "organizer": "Organization Name",
-      "categories": ["Category1", "Category2"]
+      "categories": ["Category1", "Category2"],
+      "status": "publish",
+      "timezone": "America/Los_Angeles"
     }
   ]
 }
@@ -99,6 +103,14 @@ Recurrence Day Format:
   - "third Wednesday" - Third Wednesday of each month
   - "fourth Thursday" - Fourth Thursday of each month
   - "last Friday" - Last Friday of each month
+
+Optional Global Settings:
+  - "status": Event status (default: "draft") - can be "draft" or "publish"
+  - "timezone": Event timezone (default: "America/New_York")
+
+Optional Event Settings:
+  - Each event can override global "status" and "timezone" settings
+  - Example: "status": "publish" in an individual event
 """
 
 
@@ -185,7 +197,7 @@ def create_recurring_event_series(config: Dict[str, Any], dry_run: bool = False,
                     print(f"  Event data: {json.dumps(event_data, indent=2)}")
                 success_count += 1
             else:
-                event_id = create_recurring_event(api_url, auth, event_data, verbose)
+                event_id = create_recurring_event(api_url, auth, event_data, config, verbose)
                 if event_id:
                     print(f"  ✓ Successfully created event ID: {event_id}")
                     success_count += 1
@@ -207,7 +219,7 @@ def create_recurring_event_series(config: Dict[str, Any], dry_run: bool = False,
     print(f"  Failed: {failure_count}")
 
 
-def create_recurring_event(api_url: str, auth: tuple, event_data: Dict[str, Any], verbose: bool = False) -> Optional[int]:
+def create_recurring_event(api_url: str, auth: tuple, event_data: Dict[str, Any], config: Dict[str, Any], verbose: bool = False) -> Optional[int]:
     """
     Create a single recurring event
     
@@ -215,6 +227,7 @@ def create_recurring_event(api_url: str, auth: tuple, event_data: Dict[str, Any]
         api_url: API endpoint URL
         auth: Tuple of (username, password)
         event_data: Event data dictionary
+        config: Global configuration dictionary
         verbose: Enable verbose output
     
     Returns:
@@ -223,14 +236,20 @@ def create_recurring_event(api_url: str, auth: tuple, event_data: Dict[str, Any]
     # Prepare recurrence rules
     recurrence_rules = build_recurrence_rules(event_data)
     
+    # Get status and timezone with defaults
+    # Priority: event-level > global config > defaults
+    status = event_data.get('status', config.get('status', 'draft'))
+    timezone = event_data.get('timezone', config.get('timezone', 'America/New_York'))
+    
     # Prepare event payload
     payload = {
         'title': event_data['title'],
         'description': event_data.get('description', ''),
-        'status': 'publish',
+        'status': status,
         'start_date': f"{event_data['start_date']} {event_data['start_time']}",
         'end_date': f"{event_data['start_date']} {event_data['end_time']}",
         'all_day': False,
+        'timezone': timezone,
         'recurrence': recurrence_rules,
     }
     

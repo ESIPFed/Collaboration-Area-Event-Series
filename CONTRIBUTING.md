@@ -13,7 +13,7 @@ If you find a bug or have a suggestion:
    - Clear title and description
    - Steps to reproduce (for bugs)
    - Expected vs actual behavior
-   - Your environment (PHP/Python version, WordPress version, etc.)
+   - Your environment (Python version, WordPress version, etc.)
 
 ### Submitting Changes
 
@@ -52,15 +52,11 @@ If you find a bug or have a suggestion:
 
 ### Code Style
 
-**PHP:**
-- Follow PSR-12 coding standards
-- Use meaningful variable and function names
-- Add PHPDoc comments for functions
-
 **Python:**
 - Follow PEP 8 style guide
 - Use type hints where appropriate
 - Add docstrings for functions and classes
+- Use meaningful variable and function names
 
 ### Documentation
 
@@ -75,10 +71,6 @@ Before submitting a PR, test your changes:
 
 1. **Syntax Check**
    ```bash
-   # PHP
-   php -l scripts/create-recurring-events.php
-   
-   # Python
    python -m py_compile scripts/create_recurring_events.py
    ```
 

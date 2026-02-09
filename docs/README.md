@@ -9,21 +9,10 @@ This repository contains scripts and utilities for creating recurring event seri
 - ✅ Unique event names for each event in the series
 - ✅ Customizable start/end dates and times
 - ✅ Support for venues, organizers, and categories
-- ✅ Both PHP and Python implementations available
-- ✅ Dry-run mode for testing (Python version)
+- ✅ Dry-run mode for testing
 - ✅ Verbose output for debugging
 
 ## Requirements
-
-### For PHP Script
-
-- PHP 7.4 or higher
-- cURL extension enabled
-- WordPress site with The Events Calendar Pro plugin installed
-- REST API enabled on WordPress
-- Application password for authentication
-
-### For Python Script
 
 - Python 3.6 or higher
 - `requests` library: `pip install requests`
@@ -39,7 +28,7 @@ This repository contains scripts and utilities for creating recurring event seri
    cd Collaboration-Area-Event-Series
    ```
 
-2. For Python users, install dependencies:
+2. Install dependencies:
    ```bash
    pip install requests
    ```

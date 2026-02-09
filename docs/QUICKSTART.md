@@ -18,8 +18,8 @@ This guide will help you get started with creating recurring events in WordPress
      - Copy the generated password
 
 3. **Development Environment**
-   - PHP 7.4+ (for PHP script) OR Python 3.6+ (for Python script)
-   - For Python: `pip install requests`
+   - Python 3.6+
+   - Install dependencies: `pip install requests`
 
 ## Step 2: Create Your Configuration File
 
@@ -51,20 +51,12 @@ This will show what would be created without actually creating events.
 
 ## Step 4: Create Your Events
 
-### Using Python (Recommended for beginners)
-
 ```bash
 # Basic usage
 python scripts/create_recurring_events.py --config my-config.json
 
 # With verbose output to see details
 python scripts/create_recurring_events.py --config my-config.json --verbose
-```
-
-### Using PHP
-
-```bash
-php scripts/create-recurring-events.php --config=my-config.json
 ```
 
 ## Step 5: Verify in WordPress

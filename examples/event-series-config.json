@@ -2,6 +2,8 @@
   "wordpress_url": "https://your-wordpress-site.com",
   "username": "your-username",
   "app_password": "xxxx xxxx xxxx xxxx xxxx xxxx",
+  "status": "draft",
+  "timezone": "America/New_York",
   "events": [
     {
       "title": "ESIP Collaboration Area Monthly Meeting",
