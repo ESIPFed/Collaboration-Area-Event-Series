@@ -24,8 +24,11 @@ python scripts/create_recurring_events.py --config examples/event-series-config.
 
 ## Documentation
 
+📚 **[Quick Start Guide](docs/QUICKSTART.md)** - Get started in 5 minutes
+
 For complete documentation, setup guides, and examples, see:
 - [Full Documentation](docs/README.md)
+- [Quick Start Guide](docs/QUICKSTART.md)
 - [Example Configuration](examples/event-series-config.json)
 
 ## Requirements
