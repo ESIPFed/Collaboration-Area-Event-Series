@@ -329,7 +329,6 @@ def build_recurrence_rules(event_data: Dict[str, Any]) -> Dict[str, Any]:
             },
         ],
         'end-type': 'On',
-        'end-count': None,
         'end': event_data['end_date'],
     }
     

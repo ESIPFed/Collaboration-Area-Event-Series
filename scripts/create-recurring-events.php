@@ -274,7 +274,6 @@ function buildRecurrenceRules($eventData) {
             ],
         ],
         'end-type' => 'On',
-        'end-count' => null,
         'end' => $eventData['end_date'],
     ];
     
