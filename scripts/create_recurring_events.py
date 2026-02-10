@@ -316,7 +316,8 @@ def build_recurrence_rules(event_data: Dict[str, Any]) -> Dict[str, Any]:
     
     Args:
         event_data: Event data dictionary containing:
-            - recurrence_day: Pattern like "first Monday", "second Tuesday" (required)
+            - recurrence_day: Pattern like "first Monday", "second Tuesday" 
+                             (optional, defaults to "first Monday")
             - end_date: End date for recurrence in YYYY-MM-DD format (optional)
                        If provided, sets end_type to "On" with the date
                        If omitted, sets end_type to "never"
@@ -358,24 +359,23 @@ def build_recurrence_rules(event_data: Dict[str, Any]) -> Dict[str, Any]:
     # Check if there's an end date specified
     end_date = event_data.get('end_date')
     
-    # Build recurrence rule in the format expected by The Events Calendar Pro API
-    rules = {
-        'rules': [
-            {
-                'type': 'every-month',
-                'on': on_value,
-            }
-        ]
+    # Build the rule object
+    rule = {
+        'type': 'every-month',
+        'on': on_value,
     }
     
     # Add end_type and end date if specified
     if end_date:
-        rules['rules'][0]['end_type'] = 'On'
-        rules['rules'][0]['end'] = end_date
+        rule['end_type'] = 'On'
+        rule['end'] = end_date
     else:
-        rules['rules'][0]['end_type'] = 'never'
+        rule['end_type'] = 'never'
     
-    return rules
+    # Build recurrence rule in the format expected by The Events Calendar Pro API
+    return {
+        'rules': [rule]
+    }
 
 
 if __name__ == '__main__':
