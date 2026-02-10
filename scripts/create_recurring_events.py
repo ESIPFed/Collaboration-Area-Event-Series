@@ -194,7 +194,10 @@ def create_recurring_event_series(config: Dict[str, Any], dry_run: bool = False,
             if dry_run:
                 print(f"  [DRY RUN] Would create recurring event")
                 if verbose:
-                    print(f"  Event data: {json.dumps(event_data, indent=2)}")
+                    # Build payload to show what would be sent
+                    payload = build_event_payload(event_data, config)
+                    print(f"  Payload that would be sent:")
+                    print(f"  {json.dumps(payload, indent=2)}")
                 success_count += 1
             else:
                 event_id = create_recurring_event(api_url, auth, event_data, config, verbose)
@@ -219,19 +222,16 @@ def create_recurring_event_series(config: Dict[str, Any], dry_run: bool = False,
     print(f"  Failed: {failure_count}")
 
 
-def create_recurring_event(api_url: str, auth: tuple, event_data: Dict[str, Any], config: Dict[str, Any], verbose: bool = False) -> Optional[int]:
+def build_event_payload(event_data: Dict[str, Any], config: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Create a single recurring event
+    Build the event payload for API submission
     
     Args:
-        api_url: API endpoint URL
-        auth: Tuple of (username, password)
         event_data: Event data dictionary
         config: Global configuration dictionary
-        verbose: Enable verbose output
     
     Returns:
-        Event ID on success, None on failure
+        Event payload dictionary ready for API submission
     """
     # Prepare recurrence rules
     recurrence_rules = build_recurrence_rules(event_data)
@@ -262,6 +262,26 @@ def create_recurring_event(api_url: str, auth: tuple, event_data: Dict[str, Any]
     
     if 'categories' in event_data:
         payload['categories'] = event_data['categories']
+    
+    return payload
+
+
+def create_recurring_event(api_url: str, auth: tuple, event_data: Dict[str, Any], config: Dict[str, Any], verbose: bool = False) -> Optional[int]:
+    """
+    Create a single recurring event
+    
+    Args:
+        api_url: API endpoint URL
+        auth: Tuple of (username, password)
+        event_data: Event data dictionary
+        config: Global configuration dictionary
+        verbose: Enable verbose output
+    
+    Returns:
+        Event ID on success, None on failure
+    """
+    # Build the payload
+    payload = build_event_payload(event_data, config)
     
     if verbose:
         print(f"  Payload: {json.dumps(payload, indent=2)}")
