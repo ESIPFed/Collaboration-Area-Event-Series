@@ -303,7 +303,6 @@ def build_recurrence_rules(event_data: Dict[str, Any]) -> Dict[str, Any]:
     Raises:
         ValueError: If recurrence day format is invalid
     """
-    pattern = event_data.get('recurrence_pattern', 'MONTHLY').upper()
     recurrence_day = event_data.get('recurrence_day', 'first Monday')
     
     # Parse recurrence day (e.g., "first Monday", "second Tuesday")
@@ -317,39 +316,30 @@ def build_recurrence_rules(event_data: Dict[str, Any]) -> Dict[str, Any]:
         raise ValueError(f"Invalid recurrence_day format: {recurrence_day}")
     
     position = match.group(1).lower()
-    day_of_week = match.group(2).upper()
+    day_of_week = match.group(2).lower()
     
-    # Map position to number (1-5, -1 for last)
-    position_map = {
-        'first': 1,
-        'second': 2,
-        'third': 3,
-        'fourth': 4,
-        'last': -1,
-    }
+    # Build the "on" field in the format "first monday"
+    on_value = f"{position} {day_of_week}"
     
-    position_num = position_map[position]
+    # Check if there's an end date specified
+    end_date = event_data.get('end_date')
     
-    # Build recurrence rule (RFC 5545 format adapted for The Events Calendar Pro)
+    # Build recurrence rule in the format expected by The Events Calendar Pro API
     rules = {
         'rules': [
             {
-                'type': 'Custom',
-                'custom': {
-                    'type': 'Monthly',
-                    'interval': 1,
-                    'same-time': 'yes',
-                    'month': {
-                        'same-day': 'no',
-                        'number': position_num,
-                        'day': day_of_week,
-                    },
-                },
-            },
-        ],
-        'end-type': 'On',
-        'end': event_data['end_date'],
+                'type': 'every-month',
+                'on': on_value,
+            }
+        ]
     }
+    
+    # Add end_type and end date if specified
+    if end_date:
+        rules['rules'][0]['end_type'] = 'On'
+        rules['rules'][0]['end'] = end_date
+    else:
+        rules['rules'][0]['end_type'] = 'never'
     
     return rules
 
