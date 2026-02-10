@@ -292,16 +292,30 @@ def create_recurring_event(api_url: str, auth: tuple, event_data: Dict[str, Any]
 
 def build_recurrence_rules(event_data: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Build recurrence rules for the event
+    Build recurrence rules for the event in The Events Calendar Pro API format
     
     Args:
-        event_data: Event data dictionary
+        event_data: Event data dictionary containing:
+            - recurrence_day: Pattern like "first Monday", "second Tuesday" (required)
+            - end_date: End date for recurrence in YYYY-MM-DD format (optional)
+                       If provided, sets end_type to "On" with the date
+                       If omitted, sets end_type to "never"
     
     Returns:
-        Recurrence rules dictionary
+        Recurrence rules dictionary with format:
+        {
+            'rules': [
+                {
+                    'type': 'every-month',
+                    'on': 'first monday',
+                    'end_type': 'never' or 'On',
+                    'end': 'YYYY-MM-DD'  # only if end_type is 'On'
+                }
+            ]
+        }
     
     Raises:
-        ValueError: If recurrence day format is invalid
+        ValueError: If recurrence_day format is invalid
     """
     recurrence_day = event_data.get('recurrence_day', 'first Monday')
     
