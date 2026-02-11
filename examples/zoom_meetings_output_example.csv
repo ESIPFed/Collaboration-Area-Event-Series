@@ -1,0 +1,4 @@
+created_at,host_email,meeting_id,meeting_topic,start_time,timezone,duration,join_url,registration_url,recurrence_type,occurrences
+2026-02-10T14:30:15.123456,user1@yourorganization.com,87654321098,Weekly Team Standup,2026-03-03T09:00:00,America/New_York,30,https://zoom.us/j/87654321098?pwd=example123,https://zoom.us/meeting/register/tJEqduqprDMjHNZ...,2,44
+2026-02-10T14:30:18.456789,user2@yourorganization.com,98765432109,Monthly Leadership Meeting,2026-03-15T14:00:00,America/Los_Angeles,90,https://zoom.us/j/98765432109?pwd=example456,https://zoom.us/meeting/register/tZModu6grDIqGdB...,3,10
+2026-02-10T14:30:21.789012,user3@yourorganization.com,12345678901,Daily Project Sync,2026-03-01T10:30:00,America/Chicago,15,https://zoom.us/j/12345678901?pwd=example789,,1,60
