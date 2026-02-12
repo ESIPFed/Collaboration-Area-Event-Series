@@ -97,16 +97,6 @@ The `recurrence_day` field accepts patterns like:
 
 ## Usage
 
-### PHP Script
-
-```bash
-# Basic usage
-php scripts/create-recurring-events.php --config=examples/event-series-config.json
-
-# Display help
-php scripts/create-recurring-events.php --help
-```
-
 ### Python Script
 
 ```bash

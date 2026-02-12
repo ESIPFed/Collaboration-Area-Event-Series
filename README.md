@@ -22,6 +22,11 @@ Create recurring events in WordPress:
 
 ## Quick Start
 
+### Choose Your Guide
+
+- **Zoom recurring meetings:** [docs/ZOOM_GUIDE.md](docs/ZOOM_GUIDE.md)
+- **WordPress recurring events:** [docs/QUICKSTART.md](docs/QUICKSTART.md) then [docs/README.md](docs/README.md)
+
 ### Zoom Meetings
 
 ```bash
@@ -58,7 +63,7 @@ python scripts/create_recurring_events.py --config examples/event-series-config.
 - Zoom Pro, Business, or Enterprise account
 - Server-to-Server OAuth App (see [Zoom Guide](docs/ZOOM_GUIDE.md))
 - Python 3.6+
-- `requests` and `pyjwt` packages
+- `requests` package
 
 ### For WordPress Events
 - WordPress with The Events Calendar Pro plugin
