@@ -4,6 +4,26 @@ This directory contains automation scripts for creating recurring events and mee
 
 ## Available Scripts
 
+### 0. map_zoom_to_event_series_config.py
+
+**Purpose:** Convert a Zoom meetings config JSON into a WordPress event-series config JSON
+
+**Use Case:**
+- You already have a Zoom meetings plan (e.g., `zoom-meeting-2026-config.json`)
+- You want to bootstrap a matching `event-series-config.json` for WordPress
+
+**Quick start:**
+```bash
+python map_zoom_to_event_series_config.py \
+	--zoom-config ../zoom-meeting-2026-config.json \
+	--output ../event-series-config-from-zoom.json
+```
+
+**Behavior notes:**
+- ✅ Maps monthly recurrence using `monthly_week` + `monthly_week_day`
+- ✅ Maps topic/agenda/date/time/duration/timezone to event fields
+- ⚠ Skips unsupported recurrence types (e.g., weekly) and reports warnings
+
 ### 1. create_zoom_recurring_meetings.py
 
 **Purpose:** Create recurring Zoom meetings using the Zoom API

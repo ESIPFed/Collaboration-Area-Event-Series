@@ -1,6 +1,7 @@
 # Sensitive configuration files
 config.json
 *-config.json
+*-run.json
 !examples/*-config.json
 !examples/simple-config.json
 
