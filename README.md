@@ -1,10 +1,10 @@
 # Collaboration-Area-Event-Series
 
-Scripts and utilities for creating recurring event series and meetings.
+Scripts and utilities for creating events and meetings.
 
 ## Overview
 
-This repository provides tools to automate the creation of recurring events and meetings across different platforms:
+This repository provides tools to automate event and meeting creation across different platforms:
 
 ### 🎥 Zoom Meetings (NEW!)
 Create recurring Zoom meetings with multi-user support:
@@ -14,18 +14,18 @@ Create recurring Zoom meetings with multi-user support:
 - Persistent CSV storage of all meeting details
 
 ### 📅 WordPress Events
-Create recurring events in WordPress:
+Create single or multiple events in WordPress:
 - Unique event name
-- Specific start and end dates
+- Specific start and end date/time
 - Custom time slots
-- Monthly recurrence patterns (e.g., first Monday of each month)
+- Supports one event or many from one config file
 
 ## Quick Start
 
 ### Choose Your Guide
 
 - **Zoom recurring meetings:** [docs/ZOOM_GUIDE.md](docs/ZOOM_GUIDE.md)
-- **WordPress recurring events:** [docs/QUICKSTART.md](docs/QUICKSTART.md) then [docs/README.md](docs/README.md)
+- **WordPress events:** [docs/QUICKSTART.md](docs/QUICKSTART.md) then [docs/README.md](docs/README.md)
 
 ### Zoom Meetings
 
@@ -42,7 +42,14 @@ python scripts/create_zoom_recurring_meetings.py --config examples/zoom-config.j
 ### WordPress Events
 
 ```bash
-python scripts/create_recurring_events.py --config examples/event-series-config.json
+python scripts/create_events.py --config examples/simple-config.json
+
+# Or generate wp-events-2026-config.json from Zoom inputs
+python scripts/generate_wp_events_config.py \
+	--template examples/events-config.json \
+	--zoom-config zoom-meeting-2026-config.json \
+	--zoom-output-csv zoom_meetings_output.csv \
+	--output wp-events-2026-config.json
 ```
 
 ## Documentation
@@ -55,7 +62,7 @@ python scripts/create_recurring_events.py --config examples/event-series-config.
 ### WordPress Events
 - 📚 **[Quick Start Guide](docs/QUICKSTART.md)** - Get started in 5 minutes
 - 📘 [Full Documentation](docs/README.md)
-- 📄 [Example Configuration](examples/event-series-config.json)
+- 📄 [Example Configuration](examples/events-config.json)
 
 ## Requirements
 
@@ -83,9 +90,8 @@ python scripts/create_recurring_events.py --config examples/event-series-config.
 ✅ **Dry-run mode** - Test configurations before creating  
 
 ### WordPress Events
-✅ Create multiple recurring events from a single configuration file  
-✅ Monthly recurrence patterns (first/second/third/fourth/last day of week)  
-✅ Unique event names for each event in the series  
+✅ Create one or multiple events from a single configuration file  
+✅ Unique event names for each event in the config  
 ✅ Customizable start/end dates and times  
 ✅ Support for venues, organizers, and categories  
 ✅ Dry-run mode for testing  

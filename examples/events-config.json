@@ -1,0 +1,29 @@
+{
+  "wordpress_url": "https://your-site.com",
+  "username": "admin",
+  "app_password": "your-application-password-here",
+  "status": "draft",
+  "timezone": "America/New_York",
+  "events": [
+    {
+      "title": "Monthly Team Sync",
+      "description": "Monthly team meeting.",
+      "start_date": "2026-03-10",
+      "end_date": "2026-03-10",
+      "start_time": "14:00:00",
+      "end_time": "15:00:00",
+      "venue": "Virtual",
+      "categories": ["Team Meeting", "Internal"]
+    },
+    {
+      "title": "Community Office Hours",
+      "description": "Open office hours for community members.",
+      "start_date": "2026-03-17",
+      "end_date": "2026-03-17",
+      "start_time": "13:00:00",
+      "end_time": "14:00:00",
+      "venue": "Virtual",
+      "categories": ["Community"]
+    }
+  ]
+}

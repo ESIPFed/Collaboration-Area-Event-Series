@@ -358,6 +358,8 @@ def create_meetings_from_config(config: Dict[str, Any], dry_run: bool = False, v
                 meeting_config_with_defaults["password"] = default_password
 
             payload = build_meeting_payload(meeting_config_with_defaults)
+            print("  [DRY RUN] JSON payload:")
+            print(json.dumps(payload, indent=2))
             print(f"    - Topic: {payload['topic']}")
             print(f"    - Start: {payload['start_time']}")
             print(f"    - Duration: {payload['duration']} minutes")

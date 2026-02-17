@@ -1,51 +1,29 @@
 #!/usr/bin/env python3
 """
-Convert Zoom recurring meeting config to WordPress event-series config.
+Convert Zoom meeting config to WordPress events config.
 
 This utility maps the Zoom config format used by create_zoom_recurring_meetings.py
-to the event-series format used by create_recurring_events.py.
+to the events config format used by create_events.py.
 
-Supported mapping:
-- Zoom monthly recurrence using monthly_week + monthly_week_day
-
-Unsupported entries are skipped with warnings (for example weekly recurrence).
+Recurrence settings in Zoom are not converted to WordPress recurrence rules.
+Each Zoom meeting entry maps to a single WordPress event occurrence.
 
 Usage:
-    python scripts/map_zoom_to_event_series_config.py \
-      --zoom-config zoom-meeting-2026-config.json \
-      --output event-series-config-from-zoom.json
+        python scripts/map_zoom_to_event_series_config.py \
+            --zoom-config zoom-meeting-2026-config.json \
+            --output events-config-from-zoom.json
 """
 
 import argparse
 import json
-import calendar
 import sys
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional, Tuple
 
 
-POSITION_MAP = {
-    1: "first",
-    2: "second",
-    3: "third",
-    4: "fourth",
-    -1: "last",
-}
-
-WEEKDAY_MAP = {
-    1: "Sunday",
-    2: "Monday",
-    3: "Tuesday",
-    4: "Wednesday",
-    5: "Thursday",
-    6: "Friday",
-    7: "Saturday",
-}
-
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Map Zoom meeting config to WordPress event-series config"
+        description="Map Zoom meeting config to WordPress events config"
     )
     parser.add_argument(
         "--zoom-config",
@@ -55,7 +33,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output",
         required=True,
-        help="Path for output WordPress event-series JSON",
+        help="Path for output WordPress events JSON",
     )
     parser.add_argument(
         "--wordpress-url",
@@ -92,49 +70,10 @@ def compute_end_time(start_time: str, duration_minutes: int) -> str:
     return end_dt.strftime("%H:%M:%S")
 
 
-def is_last_weekday_of_month(date_obj: datetime.date) -> bool:
-    _, month_days = calendar.monthrange(date_obj.year, date_obj.month)
-    return (date_obj.day + 7) > month_days
-
-
-def recurrence_day_from_start_date(start_date: str) -> str:
-    date_obj = datetime.strptime(start_date, "%Y-%m-%d").date()
-    weekday_name = date_obj.strftime("%A")
-
-    if is_last_weekday_of_month(date_obj):
-        position = "last"
-    else:
-        week_num = ((date_obj.day - 1) // 7) + 1
-        position = POSITION_MAP.get(week_num, "first")
-
-    return f"{position} {weekday_name}"
-
-
-def map_recurrence_day(meeting: Dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
-    recurrence_type = meeting.get("recurrence_type", "monthly").lower()
-
-    if recurrence_type != "monthly":
-        return None, f"unsupported recurrence_type='{recurrence_type}'"
-
-    monthly_week = meeting.get("monthly_week")
-    monthly_week_day = meeting.get("monthly_week_day")
-
-    if monthly_week in POSITION_MAP and monthly_week_day in WEEKDAY_MAP:
-        return f"{POSITION_MAP[monthly_week]} {WEEKDAY_MAP[monthly_week_day]}", None
-
-    if "start_date" in meeting:
-        return recurrence_day_from_start_date(meeting["start_date"]), (
-            "monthly pattern missing monthly_week/monthly_week_day; "
-            "derived recurrence_day from start_date"
-        )
-
-    return None, "missing monthly_week/monthly_week_day and start_date"
-
-
 def map_meeting_to_event(meeting: Dict[str, Any], default_timezone: str) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
-    recurrence_day, recurrence_warning = map_recurrence_day(meeting)
-    if recurrence_day is None:
-        return None, recurrence_warning
+    start_date = meeting.get("start_date")
+    if not start_date:
+        return None, "missing start_date"
 
     start_time = meeting.get("start_time", "00:00:00")
     duration = int(meeting.get("duration", 60))
@@ -142,20 +81,20 @@ def map_meeting_to_event(meeting: Dict[str, Any], default_timezone: str) -> Tupl
     event = {
         "title": meeting.get("topic", "Untitled Event"),
         "description": meeting.get("agenda", ""),
-        "start_date": meeting.get("start_date", ""),
-        "end_date": meeting.get("end_date", meeting.get("start_date", "")),
+        "start_date": start_date,
+        "end_date": start_date,
         "start_time": start_time,
         "end_time": compute_end_time(start_time, duration),
-        "recurrence_pattern": "MONTHLY",
-        "recurrence_day": recurrence_day,
         "venue": "Virtual - Zoom",
         "organizer": meeting.get("host_email", ""),
         "categories": ["Collaboration Area", "Zoom Meeting"],
         "timezone": meeting.get("timezone", default_timezone),
     }
 
-    if recurrence_warning:
-        return event, recurrence_warning
+    recurrence_type = str(meeting.get("recurrence_type", "")).strip().lower()
+    if recurrence_type and recurrence_type != "none":
+        return event, "recurrence settings ignored; mapped as a single event"
+
     return event, None
 
 
