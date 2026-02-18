@@ -25,7 +25,7 @@
       "participant_video": true,
       "join_before_host": false,
       "mute_upon_entry": true,
-      "waiting_room": true,
+      "waiting_room": false,
       "auto_recording": "none"
     },
     {
@@ -47,7 +47,7 @@
       "participant_video": false,
       "join_before_host": false,
       "mute_upon_entry": true,
-      "waiting_room": true,
+      "waiting_room": false,
       "password": "SecurePass123",
       "auto_recording": "cloud"
     },
@@ -89,7 +89,7 @@
       "participant_video": true,
       "join_before_host": false,
       "mute_upon_entry": false,
-      "waiting_room": true,
+      "waiting_room": false,
       "auto_recording": "local"
     },
     {
@@ -110,7 +110,7 @@
       "participant_video": false,
       "join_before_host": false,
       "mute_upon_entry": true,
-      "waiting_room": true,
+      "waiting_room": false,
       "watermark": true,
       "auto_recording": "cloud",
       "meeting_authentication": false

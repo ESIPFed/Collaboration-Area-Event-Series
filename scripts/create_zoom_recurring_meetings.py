@@ -180,8 +180,14 @@ def parse_recurrence_config(meeting_config: Dict[str, Any]) -> Dict[str, Any]:
             recurrence["weekly_days"] = str(zoom_weekday)
     elif recurrence_type == "monthly":
         recurrence["type"] = 3
-        # monthly_day: Day of the month (1-31)
-        if "monthly_day" in meeting_config:
+        # Option 1: Specific day of month (monthly_day: 1-31)
+        # Option 2: Nth weekday of month (monthly_week + monthly_week_day)
+        if "monthly_week" in meeting_config and "monthly_week_day" in meeting_config:
+            recurrence["monthly_week"] = meeting_config["monthly_week"]
+            recurrence["monthly_week_day"] = meeting_config["monthly_week_day"]
+            # monthly_day and monthly_week[_day] are mutually exclusive in Zoom API
+            recurrence.pop("monthly_day", None)
+        elif "monthly_day" in meeting_config:
             recurrence["monthly_day"] = meeting_config["monthly_day"]
         else:
             # Default to the day of the start date
@@ -321,6 +327,7 @@ def create_meetings_from_config(config: Dict[str, Any], dry_run: bool = False, v
     
     # Get output file path
     output_file = config.get("output_file", "zoom_meetings.csv")
+    default_password = config.get("default_password")
     
     # Process each meeting configuration
     meetings = config.get("meetings", [])
@@ -346,7 +353,13 @@ def create_meetings_from_config(config: Dict[str, Any], dry_run: bool = False, v
         
         if dry_run:
             print("  [DRY RUN] Would create meeting with:")
-            payload = build_meeting_payload(meeting_config)
+            meeting_config_with_defaults = dict(meeting_config)
+            if default_password and "password" not in meeting_config_with_defaults:
+                meeting_config_with_defaults["password"] = default_password
+
+            payload = build_meeting_payload(meeting_config_with_defaults)
+            print("  [DRY RUN] JSON payload:")
+            print(json.dumps(payload, indent=2))
             print(f"    - Topic: {payload['topic']}")
             print(f"    - Start: {payload['start_time']}")
             print(f"    - Duration: {payload['duration']} minutes")
@@ -359,11 +372,31 @@ def create_meetings_from_config(config: Dict[str, Any], dry_run: bool = False, v
         try:
             # Verify user exists
             if verbose:
-                user_info = zoom_client.get_user_info(user_email)
-                print(f"  ✓ User verified: {user_info.get('first_name', '')} {user_info.get('last_name', '')}")
+                try:
+                    user_info = zoom_client.get_user_info(user_email)
+                    print(f"  ✓ User verified: {user_info.get('first_name', '')} {user_info.get('last_name', '')}")
+                except requests.exceptions.HTTPError as e:
+                    error_message = ""
+                    if hasattr(e, 'response') and e.response is not None:
+                        try:
+                            error_message = e.response.json().get("message", "")
+                        except Exception:
+                            error_message = e.response.text
+
+                    if "does not contain scopes" in error_message and (
+                        "user:read:user:admin" in error_message or "user:read:user" in error_message
+                    ):
+                        print("  ⚠ Skipping user verification: token missing user read scope(s).")
+                        print("    Add scopes 'user:read:user:admin' and 'user:read:user' to enable this verbose check.")
+                    else:
+                        raise
             
             # Build meeting payload
-            payload = build_meeting_payload(meeting_config)
+            meeting_config_with_defaults = dict(meeting_config)
+            if default_password and "password" not in meeting_config_with_defaults:
+                meeting_config_with_defaults["password"] = default_password
+
+            payload = build_meeting_payload(meeting_config_with_defaults)
             
             # Create meeting
             meeting_info = zoom_client.create_meeting(user_email, payload)
@@ -479,6 +512,7 @@ Configuration File Format:
     "client_secret": "your-client-secret"
   },
   "output_file": "zoom_meetings.csv",
+    "default_password": "collab26",
   "meetings": [
     {
       "host_email": "user@example.com",
@@ -494,7 +528,7 @@ Configuration File Format:
       "enable_registration": true,
       "host_video": true,
       "participant_video": true,
-      "waiting_room": true
+    "waiting_room": false
     }
   ]
 }
@@ -505,7 +539,10 @@ Recurrence Types:
   * weekly_days: "1" (Sunday), "2" (Monday), ..., "7" (Saturday)
   * Multiple days: "1,3,5" (Sunday, Tuesday, Thursday)
 - monthly: Repeats on a specific day of the month
-  * monthly_day: 1-31 (day of month)
+    * monthly_day: 1-31 (day of month)
+    * OR monthly_week + monthly_week_day for nth weekday patterns:
+        - monthly_week: 1 (first), 2 (second), 3 (third), 4 (fourth), -1 (last)
+        - monthly_week_day: 1 (Sunday) ... 7 (Saturday)
 
 End Date Options:
 - end_date: ISO format date (YYYY-MM-DD)

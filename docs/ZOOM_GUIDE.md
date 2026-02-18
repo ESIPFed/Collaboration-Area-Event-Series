@@ -71,6 +71,7 @@ You need to create a Server-to-Server OAuth app in the Zoom Marketplace:
      - `meeting:write:admin` - Create meetings for any user
      - `meeting:read:admin` - Read meeting information
      - `user:read:admin` - Read user information
+     - `user:read:user` - Read basic user profile information
    - Click "Continue"
 
 6. **Activate the App**
@@ -89,7 +90,7 @@ pip install -r requirements.txt
 Or install manually:
 
 ```bash
-pip install requests pyjwt
+pip install requests
 ```
 
 ### 2. Prepare Configuration File
@@ -242,6 +243,8 @@ Get detailed output during creation:
 ```bash
 python scripts/create_zoom_recurring_meetings.py --config my-meetings-config.json --verbose
 ```
+
+Note: verbose mode attempts to verify each host with `GET /users/{email}`. If your app token does not include user-read scopes (`user:read:user:admin` and `user:read:user`), the script now skips only that verification step and still proceeds with meeting creation.
 
 ### Combined Options
 
@@ -407,7 +410,7 @@ created_at,host_email,meeting_id,meeting_topic,start_time,timezone,duration,join
       "monthly_day": 15,
       "occurrences": 10,
       "enable_registration": true,
-      "waiting_room": true,
+      "waiting_room": false,
       "auto_recording": "cloud"
     }
   ]
@@ -435,6 +438,18 @@ created_at,host_email,meeting_id,meeting_topic,start_time,timezone,duration,join
 - Ensure your OAuth app has the `meeting:write:admin` scope
 - Verify you have admin permissions in your Zoom account
 - Re-activate your OAuth app after adding scopes
+
+#### 2a. Verbose Mode Scope Warning
+
+**Warning:** `Skipping user verification: token missing user read scope(s).`
+
+**What it means:**
+- Meeting creation can still succeed if meeting write scopes are present
+- Only the verbose pre-check (`GET /users/{email}`) is skipped
+
+**To enable full verbose user verification:**
+- Add `user:read:user:admin` and `user:read:user` scopes to your Zoom app
+- Re-activate the app and generate a fresh token
 
 #### 3. Invalid User Email
 
@@ -504,7 +519,7 @@ If you encounter issues:
 
 ```json
 {
-  "waiting_room": true,
+  "waiting_room": false,
   "password": "strong-password-here",
   "meeting_authentication": true,
   "watermark": true

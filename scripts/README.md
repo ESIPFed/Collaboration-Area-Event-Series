@@ -1,6 +1,6 @@
 # Scripts Directory
 
-This directory contains automation scripts for creating recurring events and meetings.
+This directory contains automation scripts for creating events and meetings.
 
 ## Available Scripts
 
@@ -34,14 +34,14 @@ python create_zoom_recurring_meetings.py --config ../examples/zoom-config.json
 
 ---
 
-### 2. create_recurring_events.py
+### 2. create_events.py
 
-**Purpose:** Create recurring events in WordPress using The Events Calendar Pro API
+**Purpose:** Create single or multiple non-recurring events in WordPress using The Events Calendar Pro API
 
 **Use Case:**
 - WordPress site with The Events Calendar Pro plugin
-- Creating event series with custom recurrence patterns
-- Monthly events on specific days (e.g., first Monday)
+- Creating one event or many events from one config file
+- Works with the REST API without recurrence rules
 
 **Quick start:**
 ```bash
@@ -49,14 +49,39 @@ python create_zoom_recurring_meetings.py --config ../examples/zoom-config.json
 pip install -r requirements.txt
 
 # Create events
-python create_recurring_events.py --config ../examples/event-series-config.json
+python create_events.py --config ../examples/simple-config.json
 ```
 
 **Features:**
 - ✅ WordPress REST API integration
-- ✅ Monthly recurrence patterns
+- ✅ Single event or bulk event creation
 - ✅ Custom venues and organizers
-- ✅ Categories and tags support
+- ✅ Categories support
+
+---
+
+### 3. generate_wp_events_config.py
+
+**Purpose:** Generate a WordPress events config from Zoom config + Zoom output CSV
+
+**Use Case:**
+- You have `zoom-meeting-2026-config.json` with meeting definitions
+- You have `zoom_meetings_output.csv` with `registration_url` values
+- You want `wp-events-2026-config.json` in the same framework as `examples/events-config.json`
+
+**Quick start:**
+```bash
+python generate_wp_events_config.py \
+	--template ../examples/events-config.json \
+	--zoom-config ../zoom-meeting-2026-config.json \
+	--zoom-output-csv ../zoom_meetings_output.csv \
+	--output ../wp-events-2026-config.json
+```
+
+**Behavior notes:**
+- ✅ Removes trailing ` - 2026` from event titles
+- ✅ Sets event description to standard registration HTML content
+- ✅ Replaces registration link per matching `meeting_topic` from CSV
 
 ---
 
@@ -66,7 +91,7 @@ python create_recurring_events.py --config ../examples/event-series-config.json
 |---------|-------------|------------------|
 | Platform | Zoom Meetings | WordPress Events |
 | Multi-user | ✅ Yes | ❌ No |
-| Recurrence Types | Daily/Weekly/Monthly | Monthly (day patterns) |
+| Recurrence Types | Daily/Weekly/Monthly | N/A (single events) |
 | Registration | ✅ Automatic | Depends on plugin |
 | Output Format | CSV file | WordPress database |
 | Best For | Virtual meetings | Website calendar events |

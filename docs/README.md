@@ -1,12 +1,12 @@
-# Events Calendar Pro API - Recurring Events Scripts
+# Events Calendar Pro API - Event Creation Scripts
 
-This repository contains scripts and utilities for creating recurring event series in WordPress using The Events Calendar Pro REST API. Each event can have a unique name and recur monthly on specific days (e.g., first Monday of each month).
+This repository contains scripts and utilities for creating one or many WordPress events using The Events Calendar Pro REST API.
 
 ## Features
 
-- ✅ Create multiple recurring events from a single configuration file
-- ✅ Support for monthly recurrence patterns (first/second/third/fourth/last day of week)
-- ✅ Unique event names for each event in the series
+- ✅ Create one event or many events from a single configuration file
+- ✅ Supports both `event` (single) and `events` (multiple) config shapes
+- ✅ Unique event names for each event
 - ✅ Customizable start/end dates and times
 - ✅ Support for venues, organizers, and categories
 - ✅ Dry-run mode for testing
@@ -35,7 +35,8 @@ This repository contains scripts and utilities for creating recurring event seri
 
 ## Configuration
 
-Create a JSON configuration file with your WordPress credentials and event details. See `examples/event-series-config.json` for a complete example.
+Create a JSON configuration file with your WordPress credentials and event details.
+See `examples/events-config.json` for a multi-event example.
 
 ### Configuration Structure
 
@@ -49,11 +50,9 @@ Create a JSON configuration file with your WordPress credentials and event detai
       "title": "Event Name",
       "description": "Event description",
       "start_date": "2024-01-08",
-      "end_date": "2024-12-31",
+      "end_date": "2024-01-08",
       "start_time": "14:00:00",
       "end_time": "15:00:00",
-      "recurrence_pattern": "MONTHLY",
-      "recurrence_day": "first Monday",
       "venue": "Virtual - Zoom",
       "organizer": "Organization Name",
       "categories": ["Category1", "Category2"]
@@ -67,61 +66,62 @@ Create a JSON configuration file with your WordPress credentials and event detai
 - `wordpress_url`: Your WordPress site URL
 - `username`: WordPress username
 - `app_password`: Application password (see Setup Guide below)
-- `events`: Array of event objects
+- Either `events`: Array of event objects, or `event`: single event object
 
 ### Event Object Fields
 
 **Required:**
 - `title`: Event title/name (string)
-- `start_date`: First occurrence date in YYYY-MM-DD format
-- `end_date`: Last occurrence date in YYYY-MM-DD format
+- `start_date`: Event start date in YYYY-MM-DD format
+- `end_date`: Event end date in YYYY-MM-DD format
 - `start_time`: Event start time in HH:MM:SS format
 - `end_time`: Event end time in HH:MM:SS format
 
 **Optional:**
 - `description`: Event description (string)
-- `recurrence_pattern`: Currently supports "MONTHLY" (default)
-- `recurrence_day`: Day pattern like "first Monday", "second Tuesday", etc.
 - `venue`: Venue name (string)
 - `organizer`: Organizer name (string)
 - `categories`: Array of category names
 
-### Recurrence Day Format
-
-The `recurrence_day` field accepts patterns like:
-- `first Monday` - First Monday of each month
-- `second Tuesday` - Second Tuesday of each month
-- `third Wednesday` - Third Wednesday of each month
-- `fourth Thursday` - Fourth Thursday of each month
-- `last Friday` - Last Friday of each month
-
 ## Usage
-
-### PHP Script
-
-```bash
-# Basic usage
-php scripts/create-recurring-events.php --config=examples/event-series-config.json
-
-# Display help
-php scripts/create-recurring-events.php --help
-```
 
 ### Python Script
 
 ```bash
 # Basic usage
-python scripts/create_recurring_events.py --config examples/event-series-config.json
+python scripts/create_events.py --config examples/events-config.json
 
 # Dry run (test without creating events)
-python scripts/create_recurring_events.py --config examples/event-series-config.json --dry-run
+python scripts/create_events.py --config examples/events-config.json --dry-run
 
 # Verbose output
-python scripts/create_recurring_events.py --config examples/event-series-config.json --verbose
+python scripts/create_events.py --config examples/events-config.json --verbose
 
 # Display help
-python scripts/create_recurring_events.py --help
+python scripts/create_events.py --help
 ```
+
+### Generate Config from Zoom Inputs
+
+```bash
+python scripts/generate_wp_events_config.py \
+  --template examples/events-config.json \
+  --zoom-config zoom-meeting-2026-config.json \
+  --zoom-output-csv zoom_meetings_output.csv \
+  --output wp-events-2026-config.json
+```
+
+This generator:
+- uses `examples/events-config.json` as the framework,
+- maps meetings from Zoom config into WordPress `events`,
+- strips trailing ` - 2026` from titles,
+- injects standardized registration HTML into each event description,
+- and uses `registration_url` matched by `meeting_topic` from `zoom_meetings_output.csv`.
+
+The generated description includes:
+- `.registration-note` with registration requirement text,
+- `.footer-note` with calendar/update guidance,
+- `.annual-reset-note` with annual re-registration guidance.
 
 ## Setup Guide
 
@@ -145,30 +145,27 @@ The REST API is enabled by default in WordPress. If you're having issues:
 
 ## Examples
 
-### Example 1: Single Recurring Event
+### Example 1: Single Event
 
 ```json
 {
   "wordpress_url": "https://example.com",
   "username": "admin",
   "app_password": "xxxx xxxx xxxx xxxx xxxx xxxx",
-  "events": [
-    {
-      "title": "Monthly Team Meeting",
-      "description": "Regular team sync meeting",
-      "start_date": "2024-01-08",
-      "end_date": "2024-12-31",
-      "start_time": "10:00:00",
-      "end_time": "11:00:00",
-      "recurrence_day": "first Monday"
-    }
-  ]
+  "event": {
+    "title": "Team Meeting",
+    "description": "Regular team sync meeting",
+    "start_date": "2024-01-08",
+    "end_date": "2024-01-08",
+    "start_time": "10:00:00",
+    "end_time": "11:00:00"
+  }
 }
 ```
 
-### Example 2: Multiple Event Series
+### Example 2: Multiple Events
 
-See `examples/event-series-config.json` for a complete example with multiple events.
+See `examples/events-config.json` for a complete example with multiple events.
 
 ## Troubleshooting
 
@@ -189,7 +186,6 @@ See `examples/event-series-config.json` for a complete example with multiple eve
 - Run with verbose mode to see detailed error messages
 - Check WordPress error logs
 - Verify date/time formats are correct (YYYY-MM-DD and HH:MM:SS)
-- Ensure recurrence_day format is valid
 
 ### Connection Timeouts
 
@@ -225,9 +221,7 @@ For issues and questions:
 
 ## Version History
 
-### 1.0.0 (2024-01-01)
-- Initial release
-- PHP script for creating recurring events
-- Python script with dry-run and verbose modes
-- Example configuration files
-- Comprehensive documentation
+### 1.1.0 (2026-02-17)
+- Added `scripts/create_events.py` for non-recurring event creation via REST API
+- Added support for single `event` and multi `events` config formats
+- Updated documentation and examples

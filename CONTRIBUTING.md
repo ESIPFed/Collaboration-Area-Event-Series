@@ -71,28 +71,26 @@ Before submitting a PR, test your changes:
 
 1. **Syntax Check**
    ```bash
-   python -m py_compile scripts/create_recurring_events.py
+   python -m py_compile scripts/create_events.py
    ```
 
 2. **Dry Run Test**
    ```bash
-   python scripts/create_recurring_events.py --config examples/simple-config.json --dry-run
+   python scripts/create_events.py --config examples/simple-config.json --dry-run
    ```
 
 3. **Configuration Validation**
    - Test with missing required fields
    - Test with invalid date/time formats
-   - Test with various recurrence patterns
+   - Test with both single `event` and multi `events` config formats
 
 ## Feature Ideas
 
 Here are some ideas for potential contributions:
 
 ### Script Enhancements
-- [ ] Support for weekly recurrence patterns
-- [ ] Support for custom recurrence intervals (every 2 months, etc.)
 - [ ] Batch update existing events
-- [ ] Delete recurring event series
+- [ ] Delete events by criteria
 - [ ] Export events from WordPress to JSON
 
 ### Configuration

@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-This guide will help you get started with creating recurring events in WordPress using The Events Calendar Pro API.
+This guide will help you get started with creating events in WordPress using The Events Calendar Pro API.
 
 ## Step 1: Prerequisites
 
@@ -30,7 +30,7 @@ Copy one of the example configurations:
 cp examples/simple-config.json my-config.json
 
 # For multiple events
-cp examples/event-series-config.json my-config.json
+cp examples/events-config.json my-config.json
 ```
 
 Edit `my-config.json` with your details:
@@ -44,7 +44,7 @@ Edit `my-config.json` with your details:
 Run a dry-run to verify your configuration (Python only):
 
 ```bash
-python scripts/create_recurring_events.py --config my-config.json --dry-run
+python scripts/create_events.py --config my-config.json --dry-run
 ```
 
 This will show what would be created without actually creating events.
@@ -53,17 +53,17 @@ This will show what would be created without actually creating events.
 
 ```bash
 # Basic usage
-python scripts/create_recurring_events.py --config my-config.json
+python scripts/create_events.py --config my-config.json
 
 # With verbose output to see details
-python scripts/create_recurring_events.py --config my-config.json --verbose
+python scripts/create_events.py --config my-config.json --verbose
 ```
 
 ## Step 5: Verify in WordPress
 
 1. Log in to your WordPress admin panel
 2. Go to Events → All Events
-3. You should see your newly created recurring events
+3. You should see your newly created events
 
 ## Common Issues
 
@@ -81,11 +81,6 @@ python scripts/create_recurring_events.py --config my-config.json --verbose
 - Dates must be in YYYY-MM-DD format (e.g., 2024-01-15)
 - Times must be in HH:MM:SS format (e.g., 14:30:00)
 
-### "Invalid recurrence_day"
-- Must be in format: "first Monday", "second Tuesday", etc.
-- Valid positions: first, second, third, fourth, last
-- Valid days: Monday through Sunday
-
 ## Tips
 
 1. **Start Small**: Test with one event first using the simple config
@@ -94,7 +89,7 @@ python scripts/create_recurring_events.py --config my-config.json --verbose
 4. **Backup**: Consider backing up your WordPress database before bulk operations
 5. **Rate Limiting**: The script includes a 0.5-second delay between requests to avoid overwhelming your server
 
-## Example: Creating Monthly Team Meetings
+## Example: Creating Team Meetings
 
 Here's a complete example for creating a monthly team meeting:
 
@@ -108,11 +103,9 @@ Here's a complete example for creating a monthly team meeting:
       "title": "Monthly Team Sync",
       "description": "Regular monthly team meeting to discuss progress and plans",
       "start_date": "2024-01-08",
-      "end_date": "2024-12-31",
+      "end_date": "2024-01-08",
       "start_time": "10:00:00",
       "end_time": "11:00:00",
-      "recurrence_pattern": "MONTHLY",
-      "recurrence_day": "first Monday",
       "venue": "Conference Room A",
       "organizer": "Team Lead",
       "categories": ["Team Meeting", "Internal"]
@@ -124,13 +117,13 @@ Here's a complete example for creating a monthly team meeting:
 Save this as `team-meetings.json` and run:
 
 ```bash
-python scripts/create_recurring_events.py --config team-meetings.json --dry-run
+python scripts/create_events.py --config team-meetings.json --dry-run
 ```
 
 If everything looks good, create the events:
 
 ```bash
-python scripts/create_recurring_events.py --config team-meetings.json
+python scripts/create_events.py --config team-meetings.json
 ```
 
 ## Next Steps
@@ -138,7 +131,7 @@ python scripts/create_recurring_events.py --config team-meetings.json
 - Read the [full documentation](README.md) for advanced features
 - Check out more examples in the `examples/` directory
 - Customize event fields like venues, organizers, and categories
-- Create multiple event series in a single configuration file
+- Create multiple events in a single configuration file
 
 ## Support
 
