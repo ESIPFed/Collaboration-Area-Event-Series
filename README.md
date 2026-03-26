@@ -24,8 +24,9 @@ Create single or multiple events in WordPress:
 
 ### Choose Your Guide
 
-- **Zoom recurring meetings:** [docs/ZOOM_GUIDE.md](docs/ZOOM_GUIDE.md)
-- **WordPress events:** [docs/QUICKSTART.md](docs/QUICKSTART.md) then [docs/README.md](docs/README.md)
+- **Manual setup (no scripting):** [docs/MANUAL_SETUP_GUIDE.md](docs/MANUAL_SETUP_GUIDE.md) — plain language walkthrough for creating Zoom meetings and WordPress events by hand
+- **Zoom recurring meetings (scripted):** [docs/ZOOM_GUIDE.md](docs/ZOOM_GUIDE.md)
+- **WordPress events (scripted):** [docs/QUICKSTART.md](docs/QUICKSTART.md) then [docs/README.md](docs/README.md)
 
 ### Zoom Meetings
 
